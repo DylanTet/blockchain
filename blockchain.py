@@ -48,10 +48,43 @@ class Blockchain(object):
 
         return self.last_block['index'] + 1
 
+    def proof_of_work(self, last_proof) -> int:
+        """
+        Simple Proof of Work Algorithm:
+         - Find a number p' such that hash(pp') contains leading 4 zeroes
+         - p is the previous proof, and p' is the new proof
+        :param last_proof: <int>
+        :return: <int>
+        """
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+        
+        return proof
+    
     @staticmethod
-    def hash(block: Block) -> None:
-        pass
+    def valid_proof(last_proof, proof) -> bool:
+        """
+        Validates the Proof: Does hash(last_proof, proof) contain 4 leading zeroes?
+        :param last_proof: <int> Previous Proof
+        :param proof: <int> Current Proof
+        :return: <bool> True if correct, False if not.
+        """
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == '0000'
+
+    @staticmethod
+    def hash(block: Block) -> str:
+        """
+        Creates a SHA-256 hash of a Block
+        :param block: <dict> Block
+        :return: <str>
+        """
+        # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(block_string).hexdigest()
 
     @property
     def last_block(self) -> None:
-        pass
+        return self.chain[-1]
