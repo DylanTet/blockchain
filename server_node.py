@@ -48,23 +48,22 @@ def consensus():
 def mine():
     
     last_block = blockchain.last_block
-    last_proof = last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
+    proof = blockchain.proof_of_work(last_block)
     
-    blockchain.new_transaction("0", node_identifier, 1)
+    blockchain.new_transaction("0", node_identifier, '1')
     
     previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
     
     response = {
-        "message": "New block forged",
+        'message': 'New block forged',
         'index': block['index'],
         'transactions': block['transactions'],
         'proof': block['proof'],
         'previous_hash': block['previous_hash'],
     }
     
-    return jsonify(response), 200
+    return jsonify(response)
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():

@@ -110,14 +110,14 @@ class Blockchain(object):
         """
 
         self.current_transactions.append({
-            sender: sender,
-            recipient: recipient,
-            amount: amount
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount
         })
 
         return self.last_block['index'] + 1
 
-    def proof_of_work(self, last_proof) -> int:
+    def proof_of_work(self, last_block) -> int:
         """
         Simple Proof of Work Algorithm:
          - Find a number p' such that hash(pp') contains leading 4 zeroes
@@ -125,8 +125,11 @@ class Blockchain(object):
         :param last_proof: <int>
         :return: <int>
         """
+
+        last_proof = last_block['proof']
+        last_hash = self.hash(last_block)
         proof = 0
-        while self.valid_proof(last_proof, proof) is False:
+        while self.valid_proof(last_block, proof) is False:
             proof += 1
         
         return proof
@@ -144,7 +147,7 @@ class Blockchain(object):
         return guess_hash[:4] == '0000'
 
     @staticmethod
-    def hash(block: Block) -> str:
+    def hash(block) -> str:
         """
         Creates a SHA-256 hash of a Block
         :param block: <dict> Block
